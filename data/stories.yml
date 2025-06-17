@@ -1,0 +1,43 @@
+version: "3.1"
+
+stories:
+
+- story: Book a room (simple form)
+  steps:
+    - intent: book_room
+    - action: form_book_room
+    - active_loop: form_book_room
+    - slot_was_set:
+        - requested_slot: number
+    - slot_was_set:
+        - number: "2"
+    - slot_was_set:
+        - requested_slot: room_type
+    - slot_was_set:
+        - room_type: "Deluxe"
+    - action: form_book_room
+    - active_loop: null
+    - action: utter_submit
+    - action: action_reset_slots
+    - action: utter_is_that_all
+
+- story: Book number of rooms directly
+  steps:
+    - intent: book_number_room
+    - action: form_book_room_number
+    - active_loop: form_book_room_number
+    - slot_was_set:
+        - requested_slot: number
+    - slot_was_set:
+        - number: "2"
+    - action: form_book_room_number
+    - active_loop: null
+    - action: action_reset_slots
+    - action: utter_is_that_all
+
+- story: Greet and Goodbye
+  steps:
+    - intent: greet
+    - action: utter_greet
+    - intent: goodbye
+    - action: utter_goodbye

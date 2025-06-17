@@ -1,0 +1,114 @@
+version: "3.1"
+
+rules:
+
+# --- Booking Rules ---
+
+- rule: Activate book room form
+  steps:
+    - intent: book_room
+    - action: form_book_room
+    - active_loop: form_book_room
+
+- rule: Activate book room number form
+  steps:
+    - intent: book_number_room
+    - action: form_book_room_number
+    - active_loop: form_book_room_number
+
+- rule: Submit book room form
+  condition:
+    - active_loop: form_book_room
+  steps:
+    - action: form_book_room
+    - active_loop: null
+    - action: utter_submit
+    - action: action_reset_slots
+    - action: utter_is_that_all
+
+- rule: Submit book room number form
+  condition:
+    - active_loop: form_book_room_number
+  steps:
+    - action: form_book_room_number
+    - active_loop: null
+    - action: action_reset_slots
+    - action: utter_is_that_all
+
+# --- Cleaning Room Rules ---
+
+- rule: Ask when to clean room
+  steps:
+    - intent: clean_room
+    - action: utter_clean_room
+
+- rule: Clean room now
+  steps:
+    - intent: clean_room_now
+    - action: utter_clean_room_now
+
+- rule: Clean room at a relative time
+  steps:
+    - intent: clean_room_relative
+    - action: utter_clean_room_relative
+
+# --- FAQ Rules ---
+
+- rule: Answer check-in time
+  steps:
+    - intent: faq_check_in_time
+    - action: action_check_in_time
+
+- rule: Answer check-out time
+  steps:
+    - intent: faq_check_out_time
+    - action: action_check_out_time
+
+- rule: Answer cancel reservation
+  steps:
+    - intent: faq_cancel_reservation
+    - action: action_cancel_reservation
+
+- rule: Answer cancellation policy
+  steps:
+    - intent: faq_cancellation_policy
+    - action: action_cancellation_policy
+
+- rule: Answer restaurant info
+  steps:
+    - intent: faq_have_restaurant
+    - action: action_have_restaurant
+
+- rule: Answer breakfast availability
+  steps:
+    - intent: faq_breakfast_avail
+    - action: action_breakfast_avail
+
+- rule: Answer breakfast time
+  steps:
+    - intent: faq_breakfast_time
+    - action: action_breakfast_time
+
+- rule: Answer restaurant time
+  steps:
+    - intent: faq_restaurant_time
+    - action: action_restaurant_time
+
+# --- Fallback Rule ---
+
+- rule: Default fallback
+  steps:
+    - intent: nlu_fallback
+    - action: action_my_fallback
+
+# --- Follow-up after asking if that's all ---
+
+- rule: User confirms it's all
+  steps:
+    - intent: affirm
+    - action: utter_goodbye
+
+- rule: User wants to do more
+  steps:
+    - intent: deny
+    - action: utter_greet

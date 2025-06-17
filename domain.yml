@@ -1,0 +1,151 @@
+version: "3.1"
+
+intents:
+  - greet
+  - affirm
+  - deny
+  - goodbye
+  - book_room
+  - book_number_room
+  - num_rooms
+  - type_rooms
+  - clean_room
+  - clean_room_now
+  - clean_room_relative
+  - faq_check_in_time
+  - faq_check_out_time
+  - faq_cancel_reservation
+  - faq_cancellation_policy
+  - faq_have_restaurant
+  - faq_breakfast_avail
+  - faq_breakfast_time
+  - faq_restaurant_time
+
+entities:
+  - number
+  - location
+  - room_type
+
+slots:
+  number:
+    type: float
+    mappings:
+      - type: from_entity
+        entity: number
+  room_type:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: room_type
+  phone_number:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: form_book_room
+            requested_slot: phone_number
+
+responses:
+  utter_greet:
+    - text: Hey! How can I help you?
+    - text: Hey there! How can I help you today?
+
+  utter_goodbye:
+    - text: Ok then! Have a nice day!
+
+  utter_submit:
+    - text: 'Your room(s) have been booked. Number of {room_type} rooms booked: {number}. We will contact you at {phone_number}.'
+
+
+  utter_ask_number:
+    - text: Select the number of rooms you want to book
+      buttons:
+        - title: "1"
+          payload: '/num_rooms{{"number": "1"}}'
+        - title: "2"
+          payload: '/num_rooms{{"number": "2"}}'
+
+  utter_ask_room_type:
+    - text: Select from one of the room types
+      buttons:
+        - title: Simple
+          payload: '/type_rooms{{"room_type": "Simple"}}'
+        - title: Deluxe
+          payload: '/type_rooms{{"room_type": "Deluxe"}}'
+
+  utter_simple_room_image:
+    - text: "Simple room:"
+      image: https://media-cdn.tripadvisor.com/media/photo-s/01/59/93/8d/simple-room.jpg
+
+  utter_deluxe_room_image:
+    - text: "Deluxe room:"
+      image: https://www.mhotel.in/img/super/01.jpg
+
+  utter_clean_room:
+    - text: When do you want to clean your room?
+
+  utter_clean_room_now:
+    - text: Someone is being sent to your room ASAP!
+
+  utter_clean_room_relative:
+    - text: Someone will be sent at your required time!
+
+  utter_check_in_time:
+    - text: Check-in time starts at 4 PM. Minimum check-in age is 21.
+
+  utter_check_out_time:
+    - text: Check-out time is 11 AM.
+
+  utter_cancel_reservation:
+    - text: Please go to Reservations and cancel from there.
+
+  utter_cancellation_policy:
+    - text: You can cancel up to 15 days before arrival for a refund.
+
+  utter_have_restaurant:
+    - text: Yes, the hotel has a restaurant called Zephyr Bar.
+
+  utter_breakfast_avail:
+    - text: We provide a free made-to-order breakfast each morning.
+
+  utter_breakfast_time:
+    - text: 'Mon–Fri: 6–9am, Sat–Sun: 7–10:30am'
+
+  utter_restaurant_time:
+    - text: Our restaurant serves a 24-hour menu.
+
+  utter_is_that_all:
+    - text: Would that be all?
+
+  utter_fallback_message:
+    - text: Sorry, I didn't understand. Can you rephrase?
+
+  utter_ask_phone_number:
+    - text: Could you please provide your phone number so we can contact you?
+
+actions:
+  - action_reset_slots
+  - action_my_fallback
+  - action_check_in_time
+  - action_check_out_time
+  - action_cancel_reservation
+  - action_cancellation_policy
+  - action_have_restaurant
+  - action_breakfast_avail
+  - action_breakfast_time
+  - action_restaurant_time
+
+forms:
+  form_book_room:
+    required_slots:
+      - number
+      - room_type
+      - phone_number
+  form_book_room_number:
+    required_slots:
+      - number
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
