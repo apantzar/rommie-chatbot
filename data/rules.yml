@@ -16,6 +16,11 @@ rules:
     - action: form_book_room_number
     - active_loop: form_book_room_number
 
+- rule: Say thank you response
+  steps:
+    - intent: thanks
+    - action: utter_thanks
+
 - rule: Submit book room form
   condition:
     - active_loop: form_book_room

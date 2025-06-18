@@ -232,3 +232,14 @@ nlu:
     - take care!
     - have fun!
     - adios!
+
+- intent: thanks
+  examples: |
+    - thank you
+    - thanks a lot
+    - appreciate it
+    - cheers
+    - thank u
+    - thnx
+    - thx
+    - thankyou
