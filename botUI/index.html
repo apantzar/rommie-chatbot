@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Roomie Bot</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .background-text {
+        position: fixed;
+        top: 0;
+        left: 0;
+        font-size: 36px;
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.03);
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        grid-auto-rows: 60px;
+        align-items: center;
+        justify-items: center;
+        text-transform: uppercase;
+      }
+
+      .background-text span {
+        user-select: none;
+      }
+
+      #chat-container {
+        position: relative;
+        max-width: 600px;
+        margin: 60px auto;
+        height: 80vh;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        z-index: 1;
+      }
+
+      #chat-box {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .message {
+        padding: 10px 14px;
+        border-radius: 12px;
+        max-width: 80%;
+        line-height: 1.4;
+        font-size: 15px;
+        word-wrap: break-word;
+      }
+
+      .bot {
+        background-color: #eef2f7;
+        align-self: flex-start;
+      }
+
+      .user {
+        background-color: #d1e7dd;
+        align-self: flex-end;
+      }
+
+      #input-form {
+        display: flex;
+        border-top: 1px solid #ddd;
+      }
+
+      #user-input {
+        flex: 1;
+        border: none;
+        padding: 14px;
+        font-size: 16px;
+        outline: none;
+      }
+
+      #send-btn {
+        padding: 14px 18px;
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      .typing {
+        font-style: italic;
+        color: gray;
+        font-size: 14px;
+      }
+
+      .rasa-button {
+        margin: 6px 6px 0 0;
+        padding: 8px 12px;
+        background-color: #0078d4;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      img {
+        max-width: 100%;
+        margin-top: 10px;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-text" id="bg-text"></div>
+
+    <div id="chat-container">
+      <div id="chat-box">
+        <div class="message bot">Hello! I'm Roomie 🤖. How can I help you?</div>
+      </div>
+      <form id="input-form">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your message..."
+          autocomplete="off"
+        />
+        <button type="submit" id="send-btn">Send</button>
+      </form>
+    </div>
+
+    <script>
+      const form = document.getElementById("input-form");
+      const input = document.getElementById("user-input");
+      const chatBox = document.getElementById("chat-box");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const message = input.value.trim();
+        if (!message) return;
+        appendMessage("user", message);
+        input.value = "";
+        showTyping();
+        await sendMessageToRasa(message);
+        removeTyping();
+      });
+
+      function appendMessage(sender, data) {
+        const wrapper = document.createElement("div");
+        wrapper.className = `message ${sender}`;
+
+        if (typeof data === "string") {
+          wrapper.innerText = data;
+        } else {
+          if (data.text) {
+            const text = document.createElement("div");
+            text.innerText = data.text;
+            wrapper.appendChild(text);
+          }
+
+          if (data.image) {
+            const img = document.createElement("img");
+            img.src = data.image;
+            wrapper.appendChild(img);
+          }
+
+          if (data.buttons && Array.isArray(data.buttons)) {
+            const btnGroup = document.createElement("div");
+            data.buttons.forEach((btn) => {
+              const button = document.createElement("button");
+              button.className = "rasa-button";
+              button.innerText = btn.title;
+              button.type = "button";
+              button.addEventListener("click", async (e) => {
+                e.preventDefault();
+                appendMessage("user", btn.title);
+                showTyping();
+                await sendMessageToRasa(btn.payload);
+                removeTyping();
+              });
+
+              btnGroup.appendChild(button);
+            });
+            wrapper.appendChild(btnGroup);
+          }
+        }
+
+        chatBox.appendChild(wrapper);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function showTyping() {
+        const typing = document.createElement("div");
+        typing.className = "message bot typing";
+        typing.id = "typing";
+        typing.innerText = "Roomie is typing...";
+        chatBox.appendChild(typing);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function removeTyping() {
+        const typing = document.getElementById("typing");
+        if (typing) typing.remove();
+      }
+
+      async function sendMessageToRasa(message) {
+        try {
+          const res = await fetch(
+            "http://localhost:5005/webhooks/rest/webhook",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ sender: "user", message }),
+            }
+          );
+          const data = await res.json();
+          console.log(data);
+          if (data && data.length > 0) {
+            appendMessage("bot", data[0]);
+          } else {
+            appendMessage(
+              "bot",
+              "Sorry, I didn't get that. Could you please rephrase?"
+            );
+          }
+        } catch (err) {
+          console.error(err);
+          appendMessage("bot", "Oops, something went wrong! Please try again");
+        }
+      }
+
+      // Fill background with 'Roomie'
+      const bg = document.getElementById("bg-text");
+      for (let i = 0; i < 300; i++) {
+        const span = document.createElement("span");
+        span.textContent = "Roomie";
+        bg.appendChild(span);
+      }
+    </script>
+  </body>
+</html>
