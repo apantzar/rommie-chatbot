@@ -21,7 +21,7 @@ class MyFallbackAction(Action):
 
         # Only repeat buttons or custom payload if confidence is low
         confidence = tracker.latest_message.get("intent", {}).get("confidence", 1.0)
-        if confidence < 0.4:  # Adjust this threshold if needed
+        if confidence < 0.4:
             repeat(tracker, dispatcher)
 
         return []
@@ -53,8 +53,6 @@ def repeat(tracker: Tracker, dispatcher: CollectingDispatcher):
             dispatcher.utter_message(text=event.get('text'), json_message=data["custom"])
         break
 
-
-# FAQ-style actions: keep them simple
 class ActionCheckInTime(Action):
     def name(self): return "action_check_in_time"
     def run(self, dispatcher, tracker, domain):
