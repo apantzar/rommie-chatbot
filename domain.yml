@@ -55,8 +55,12 @@ responses:
   utter_goodbye:
     - text: Ok then! Have a nice day!
 
+  utter_smalltalk_how_are_you:
+    - text: I'm just a bot, but I'm doing great! How can I assist you today?
+    - text: I'm doing well, thanks for asking! How can I help?
+
   utter_submit:
-    - text: 'Your room(s) have been booked. Number of {room_type} rooms booked: {number}. We will contact you at {phone_number}.'
+    - text: 'Your room(s) have been booked. Number of {room_type} rooms booked: {number}. We will contact you at {phone_number}. Let me know if you need help with anything else. 😊'
 
   utter_thanks:
     - text: My pleasure! Let me know if you need help with anything else. 😊
@@ -79,7 +83,7 @@ responses:
 
   utter_simple_room_image:
     - text: "Simple room:"
-      image: https://media-cdn.tripadvisor.com/media/photo-s/01/59/93/8d/simple-room.jpg
+      image: https://www.mhotel.in/img/super/03.jpg
 
   utter_deluxe_room_image:
     - text: "Deluxe room:"

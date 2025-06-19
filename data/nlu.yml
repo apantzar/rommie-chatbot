@@ -23,6 +23,11 @@ nlu:
     - Book [room](location)
     - book [rooms](location)
     - book the [rooms](location)
+    - i want to make a reservation
+    - make a reservation
+    - reservation [room](location)
+    - the [room] reservation
+    - need a reservation
 
 - intent: book_number_room
   examples: |
@@ -106,8 +111,8 @@ nlu:
     - what are your check-out timings?
     - check out timings?
     - check out time
-    - what is the check-in time?
-    - what is the check in time?
+    - what is the check-out time?
+    - what is the check out time?
     - can you tell me your check-out timings?
     - can you tell me your check out timings?
     - i would like to know your check-out timings
@@ -115,8 +120,9 @@ nlu:
     - when can I check out?
     - check-out?
     - could you tell me when to check-out?
-    - when check in?
+    - when check out?
     - i want to check out. can you tell me check out timings?
+
 
 - intent: faq_cancel_reservation
   examples: |
@@ -243,3 +249,13 @@ nlu:
     - thnx
     - thx
     - thankyou
+
+- intent: smalltalk_how_are_you
+  examples: |
+    - how are you?
+    - how's it going?
+    - what's up?
+    - how have you been?
+    - how do you do?
+    - are you okay?
+    - how are things?

@@ -64,6 +64,11 @@ rules:
     - intent: faq_check_in_time
     - action: action_check_in_time
 
+- rule: Respond to "how are you"
+  steps:
+    - intent: smalltalk_how_are_you
+    - action: utter_smalltalk_how_are_you
+
 - rule: Answer check-out time
   steps:
     - intent: faq_check_out_time
